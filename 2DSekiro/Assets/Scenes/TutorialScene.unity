@@ -314,7 +314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   directionFacing: 1
-  speed: 4
+  speed: 12
   sprintMultiplier: 2
   parryWindowBase: 0.5
   parryWindowInit: 0.5
