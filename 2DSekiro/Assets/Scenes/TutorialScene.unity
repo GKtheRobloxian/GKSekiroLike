@@ -295,7 +295,7 @@ Transform:
   m_GameObject: {fileID: 852453315}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -314,14 +314,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   directionFacing: 1
-  speed: 12
+  speed: 5
   sprintMultiplier: 2
   parryWindowBase: 0.5
   parryWindowInit: 0.5
   normalBlocking: 0
   parryWindow: 0
   parryStaleInit: 0.6
-  parryStaleAmount: 0.9
+  parryStaleAmount: 0.7
   parryStale: 0
   lastParrySuccessful: 0
 --- !u!50 &852453319

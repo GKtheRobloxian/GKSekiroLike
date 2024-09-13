@@ -6,6 +6,7 @@ public class PlayerControls : MonoBehaviour
 {
     public float directionFacing = 1;
     public float speed = 4f;
+    float speedUpdate = 0f;
     public float sprintMultiplier = 2f;
     public float parryWindowBase = 0.5f;
     public float parryWindowInit;
@@ -22,6 +23,7 @@ public class PlayerControls : MonoBehaviour
     {
         playerSprite = GetComponent<SpriteRenderer>();
         parryWindowInit = parryWindowBase;
+        speedUpdate = speed;
     }
 
     // Update is called once per frame
@@ -62,6 +64,14 @@ public class PlayerControls : MonoBehaviour
         }
 
         horizontalMove = Input.GetAxis("Horizontal");
-        transform.Translate(Vector3.right * horizontalMove * Time.deltaTime);
+        if (parryWindow > 0f || Input.GetKey(KeyCode.F))
+        {
+            speedUpdate = speed / 2f;
+        }
+        else
+        {
+            speedUpdate = speed;
+        }
+        transform.Translate(Vector3.right * speedUpdate * horizontalMove * Time.deltaTime);
     }
 }
