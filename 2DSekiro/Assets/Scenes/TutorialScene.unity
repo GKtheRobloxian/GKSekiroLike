@@ -316,7 +316,7 @@ MonoBehaviour:
   directionFacing: 1
   speed: 5
   speedUpdate: 0
-  sprintMultiplier: 2
+  sprintMultiplier: 1.75
   parryWindowBase: 0.5
   parryWindowInit: 0.5
   normalBlocking: 0
@@ -328,6 +328,11 @@ MonoBehaviour:
   sprintWindowInit: 0.75
   sprintWindowLeft: 0
   sprintWindowRight: 0
+  movementBlocked: 0
+  actionBlocked: 0
+  parryActionBlockTimeInit: 0.6
+  parryActionBlockTime: 0
+  grounded: 1
 --- !u!50 &852453319
 Rigidbody2D:
   serializedVersion: 4
@@ -413,7 +418,7 @@ GameObject:
   - component: {fileID: 2075932592}
   m_Layer: 0
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

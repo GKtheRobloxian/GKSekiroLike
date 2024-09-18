@@ -19,11 +19,18 @@ public class PlayerControls : MonoBehaviour
     public float sprintWindowInit = 1f / 3f;
     public float sprintWindowLeft = 0f;
     public float sprintWindowRight = 0f;
+    public bool movementBlocked = false;
+    public bool actionBlocked = false;
+    public float parryActionBlockTimeInit = 0.6f;
+    public float parryActionBlockTime;
+    public bool grounded = false;
+    Rigidbody2D rb;
     float horizontalMove;
     SpriteRenderer playerSprite;
     // Start is called before the first frame update
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         playerSprite = GetComponent<SpriteRenderer>();
         parryWindowInit = parryWindowBase;
         speedUpdate = speed;
@@ -36,6 +43,7 @@ public class PlayerControls : MonoBehaviour
         sprintWindowLeft -= Time.deltaTime;
         parryWindow -= Time.deltaTime;
         parryStale -= Time.deltaTime;
+        parryActionBlockTime -= Time.deltaTime;
 
         if (parryWindow > 0f)
         {
@@ -54,6 +62,7 @@ public class PlayerControls : MonoBehaviour
             }
             parryWindow = parryWindowInit;
             parryStale = parryStaleInit;
+            parryActionBlockTime = parryActionBlockTimeInit;
         }
 
         if (Input.GetKey(KeyCode.F) && parryWindow < 0f)
@@ -68,7 +77,12 @@ public class PlayerControls : MonoBehaviour
             normalBlocking = false;
         }
 
-        horizontalMove = Input.GetAxisRaw("Horizontal");
+        
+        horizontalMove = Input.GetAxis("Horizontal");
+        if (movementBlocked)
+        {
+            horizontalMove = 0;
+        }
         if (parryWindow > 0f || Input.GetKey(KeyCode.F))
         {
             speedUpdate = speed / 2f;
@@ -78,29 +92,41 @@ public class PlayerControls : MonoBehaviour
             speedUpdate = speed;
         }
 
+        if (Input.GetKey(KeyCode.LeftShift) && horizontalMove != 0f && !Input.GetKey(KeyCode.F) && parryWindow < 0f)
+        {
+            speedUpdate = speed * 2f;
+        }
 
-        if (Input.GetKeyDown(KeyCode.D))
+        transform.Translate(Vector3.right * horizontalMove * speedUpdate * Time.deltaTime);
+
+        if (Input.GetKeyDown(KeyCode.Space) && parryActionBlockTime < 0 && grounded)
         {
-            if (sprintWindowRight > 0f)
-            {
-                speedUpdate = speed * 2f;
-            }
-            else
-            {
-                sprintWindowRight = sprintWindowInit;
-            }
+            StartCoroutine(JumpCoroutine());
         }
-        if (Input.GetKeyDown(KeyCode.A))
+    }
+
+    IEnumerator JumpCoroutine()
+    {
+        movementBlocked = true;
+        yield return new WaitForSeconds(0.1f);
+        rb.AddRelativeForce(Vector3.up * 7.5f + Vector3.right * rb.velocity.x * 1.5f, ForceMode2D.Impulse);
+        movementBlocked = false;
+
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
         {
-            if (sprintWindowLeft > 0f)
-            {
-                speedUpdate = speed * 2f;
-            }
-            else
-            {
-                sprintWindowLeft = sprintWindowInit;
-            }
+            grounded = false;
         }
-        transform.Translate(Vector3.right * speedUpdate * horizontalMove * Time.deltaTime);
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            grounded = true;
+        }
     }
 }
