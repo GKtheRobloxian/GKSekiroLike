@@ -16,9 +16,7 @@ public class PlayerControls : MonoBehaviour
     public float parryStaleAmount = 0.9f;
     public float parryStale = 0f;
     public bool lastParrySuccessful = false;
-    public float sprintWindowInit = 1f / 3f;
-    public float sprintWindowLeft = 0f;
-    public float sprintWindowRight = 0f;
+    public float jumpForce;
     public bool movementBlocked = false;
     public bool actionBlocked = false;
     public float parryActionBlockTimeInit = 0.6f;
@@ -39,8 +37,6 @@ public class PlayerControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        sprintWindowRight -= Time.deltaTime;
-        sprintWindowLeft -= Time.deltaTime;
         parryWindow -= Time.deltaTime;
         parryStale -= Time.deltaTime;
         parryActionBlockTime -= Time.deltaTime;
@@ -78,7 +74,7 @@ public class PlayerControls : MonoBehaviour
         }
 
         
-        horizontalMove = Input.GetAxis("Horizontal");
+        horizontalMove = Input.GetAxisRaw("Horizontal");
         if (movementBlocked)
         {
             horizontalMove = 0;
@@ -97,8 +93,37 @@ public class PlayerControls : MonoBehaviour
             speedUpdate = speed * 2f;
         }
 
-        transform.Translate(Vector3.right * horizontalMove * speedUpdate * Time.deltaTime);
-
+        if (grounded)
+        {
+            rb.AddRelativeForce(Vector3.right * speedUpdate * 2f * horizontalMove);
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            directionFacing = -1;
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            directionFacing = 1;
+        }
+        if (directionFacing == -1)
+        {
+            transform.localScale = Vector3.left + Vector3.up * 2 + Vector3.forward;
+        }
+        else
+        {
+            transform.localScale = Vector3.right + Vector3.up * 2 + Vector3.forward;
+        }
+        if (grounded && rb.velocity.magnitude > speedUpdate && !movementBlocked)
+        {
+            if (rb.velocity.x < 0f)
+            {
+                rb.velocity = Vector3.left * speedUpdate;
+            }
+            else
+            {
+                rb.velocity = Vector3.right * speedUpdate;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.Space) && parryActionBlockTime < 0 && grounded)
         {
             StartCoroutine(JumpCoroutine());
@@ -109,7 +134,8 @@ public class PlayerControls : MonoBehaviour
     {
         movementBlocked = true;
         yield return new WaitForSeconds(0.1f);
-        rb.AddRelativeForce(Vector3.up * 7.5f + Vector3.right * rb.velocity.x * 1.5f, ForceMode2D.Impulse);
+        grounded = false;
+        rb.AddRelativeForce(Vector3.up * jumpForce + Vector3.right * rb.velocity.x * 0.6f, ForceMode2D.Impulse);
         movementBlocked = false;
 
     }

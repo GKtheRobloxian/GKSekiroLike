@@ -183,7 +183,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -314,9 +314,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   directionFacing: 1
-  speed: 5
+  speed: 3
   speedUpdate: 0
-  sprintMultiplier: 1.75
+  sprintMultiplier: 1.6
   parryWindowBase: 0.5
   parryWindowInit: 0.5
   normalBlocking: 0
@@ -325,14 +325,12 @@ MonoBehaviour:
   parryStaleAmount: 0.7
   parryStale: 0
   lastParrySuccessful: 0
-  sprintWindowInit: 0.75
-  sprintWindowLeft: 0
-  sprintWindowRight: 0
+  jumpForce: 12
   movementBlocked: 0
   actionBlocked: 0
   parryActionBlockTimeInit: 0.6
   parryActionBlockTime: 0
-  grounded: 1
+  grounded: 0
 --- !u!50 &852453319
 Rigidbody2D:
   serializedVersion: 4
@@ -348,7 +346,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -359,7 +357,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &852453320
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -485,7 +483,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -7, z: 0}
-  m_LocalScale: {x: 30, y: 10, z: 1}
+  m_LocalScale: {x: 50, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
