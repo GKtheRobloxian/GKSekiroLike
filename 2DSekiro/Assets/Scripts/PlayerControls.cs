@@ -161,14 +161,7 @@ public class PlayerControls : MonoBehaviour
     IEnumerator ApplyHitstun (float stunTime, float push)
     {
         inHitstun = true;
-        if (directionFacing == 1)
-        {
-            rb.AddRelativeForce(Vector2.left * push, ForceMode2D.Impulse);
-        }
-        else
-        {
-            rb.AddRelativeForce(Vector2.right * push, ForceMode2D.Impulse);
-        }
+        rb.AddForce(push * Vector2.right, ForceMode2D.Impulse);
         yield return new WaitForSeconds(stunTime);
         inHitstun = false;
     }
@@ -208,14 +201,7 @@ public class PlayerControls : MonoBehaviour
                 else
                 {
                     stuckInBlock = hitboxScript.onBlockStun;
-                    if (directionFacing == 1)
-                    {
-                        rb.AddRelativeForce(Vector2.left * hitboxScript.blockPushback, ForceMode2D.Impulse);
-                    }
-                    else
-                    {
-                        rb.AddRelativeForce(Vector2.right * hitboxScript.blockPushback, ForceMode2D.Impulse);
-                    }
+                    rb.AddForce(Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback * Vector2.right, ForceMode2D.Impulse);
                 }
             }
             else
@@ -228,14 +214,7 @@ public class PlayerControls : MonoBehaviour
                 {
                     lastParrySuccessful = true;
                     parryWindow = 0;
-                    if (directionFacing == 1)
-                    {
-                        rb.AddRelativeForce(Vector2.left * hitboxScript.deflectPushback, ForceMode2D.Impulse);
-                    }
-                    else
-                    {
-                        rb.AddRelativeForce(Vector2.right * hitboxScript.deflectPushback, ForceMode2D.Impulse);
-                    }
+                    rb.AddForce(Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback * Vector2.right, ForceMode2D.Impulse);
                 }
             }
         }

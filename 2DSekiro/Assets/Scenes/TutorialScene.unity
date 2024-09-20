@@ -683,7 +683,7 @@ MonoBehaviour:
   damageDealt: 0
   hitPushback: 5
   blockPushback: 25
-  deflectPushback: 40
+  deflectPushback: 100
   onHitStun: 0.5
   onBlockStun: 0.2
   size: {x: 0, y: 0, z: 0}
