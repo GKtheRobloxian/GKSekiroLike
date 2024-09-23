@@ -10,6 +10,7 @@ public class PlayerControls : MonoBehaviour
     public float sprintMultiplier = 2f;
     public float parryWindowBase = 0.5f;
     public float parryWindowInit;
+    public float thrustParryWindow;
     public bool normalBlocking = false;
     public float stuckInBlock = 0f;
     public float parryWindow = 0f;
@@ -42,6 +43,7 @@ public class PlayerControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        thrustParryWindow -= Time.deltaTime;
         stuckInBlock -= Time.deltaTime;
         parryWindow -= Time.deltaTime;
         parryStale -= Time.deltaTime;
@@ -64,6 +66,7 @@ public class PlayerControls : MonoBehaviour
             }
             lastParrySuccessful = false;
             parryWindow = parryWindowInit;
+            thrustParryWindow = parryWindowInit * 2f / 3f;
             parryStale = parryStaleInit;
             parryActionBlockTime = parryActionBlockTimeInit;
         }
@@ -186,6 +189,11 @@ public class PlayerControls : MonoBehaviour
         forceMovementBlock = false;
     }
 
+    IEnumerator WaitForDash()
+    {
+
+    }
+
     void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -232,7 +240,7 @@ public class PlayerControls : MonoBehaviour
                     {
                         StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
                     }
-                    else if (hitboxScript.hitboxType == 1 && parryWindow < 0.25f)
+                    else if (hitboxScript.hitboxType == 1 && thrustParryWindow < 0f)
                     {
                         StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
                     }

@@ -449,8 +449,9 @@ MonoBehaviour:
   speed: 3
   speedUpdate: 0
   sprintMultiplier: 1.6
-  parryWindowBase: 0.75
+  parryWindowBase: 0.5
   parryWindowInit: 0.75
+  thrustParryWindow: 0
   normalBlocking: 0
   stuckInBlock: 0
   parryWindow: 0
