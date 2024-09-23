@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TranslateLeft : MonoBehaviour
+public class TranslateRight : MonoBehaviour
 {
     public float speed;
     // Start is called before the first frame update
@@ -14,6 +14,6 @@ public class TranslateLeft : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
+        transform.Translate(Vector2.right * speed * Time.deltaTime);
     }
 }
