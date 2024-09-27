@@ -12,6 +12,7 @@ public class PlayerControls : MonoBehaviour
     public BoxCollider2D[] allColliders;
     public BoxCollider2D[] collidersOnPlayer;
     BoxCollider2D hitbox;
+    public bool invincible = false;
     public float parryWindowBase = 0.5f;
     public float parryWindowInit;
     public float thrustParryWindow;
@@ -232,9 +233,9 @@ public class PlayerControls : MonoBehaviour
     {
         forceMovementBlock = true;
         forceActionBlock = true;
-        hitbox.enabled = false;
+        invincible = true;
         yield return new WaitForSeconds(0.2f);
-        hitbox.enabled = true;
+        invincible = false;
         yield return new WaitForSeconds(0.3f);
         forceMovementBlock = false;
         forceActionBlock = false;
@@ -262,49 +263,52 @@ public class PlayerControls : MonoBehaviour
         {
             GameObject colliding = collide.gameObject;
             Hitbox hitboxScript = colliding.GetComponent<Hitbox>();
-            if (hitboxScript.hitboxType != 2)
+            if (!invincible)
             {
-                if (parryWindow < 0)
+                if (hitboxScript.hitboxType != 2)
                 {
-                    if (!normalBlocking)
+                    if (parryWindow < 0)
                     {
-                        StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
-                    }
-                    else if (((collide.gameObject.transform.position.x - transform.position.x) > 0 && directionFacing == -1) || ((collide.gameObject.transform.position.x - transform.position.x) < 0 && directionFacing == 1) || hitboxScript.hitboxType == 1)
-                    {
-                        StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
+                        if (!normalBlocking)
+                        {
+                            StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
+                        }
+                        else if (((collide.gameObject.transform.position.x - transform.position.x) > 0 && directionFacing == -1) || ((collide.gameObject.transform.position.x - transform.position.x) < 0 && directionFacing == 1) || hitboxScript.hitboxType == 1)
+                        {
+                            StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
+                        }
+                        else
+                        {
+                            stuckInBlock = hitboxScript.onBlockStun;
+                            rb.AddForce(Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.blockPushback * Vector2.left, ForceMode2D.Impulse);
+                        }
                     }
                     else
                     {
-                        stuckInBlock = hitboxScript.onBlockStun;
-                        rb.AddForce(Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.blockPushback * Vector2.left, ForceMode2D.Impulse);
+                        if (((collide.gameObject.transform.position.x - transform.position.x) > 0 && directionFacing == -1) || ((collide.gameObject.transform.position.x - transform.position.x) < 0 && directionFacing == 1))
+                        {
+                            StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
+                        }
+                        else if (hitboxScript.hitboxType == 1 && thrustParryWindow < 0f)
+                        {
+                            StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
+                        }
+                        else
+                        {
+                            lastParrySuccessful = true;
+                            parryWindow = 0;
+                            parryActionBlockTime = hitboxScript.onParryStun;
+                            StartCoroutine(ParryMovementBlock());
+                            rb.AddForce(Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.deflectPushback * Vector2.left, ForceMode2D.Impulse);
+                        }
                     }
                 }
                 else
                 {
-                    if (((collide.gameObject.transform.position.x - transform.position.x) > 0 && directionFacing == -1) || ((collide.gameObject.transform.position.x - transform.position.x) < 0 && directionFacing == 1))
+                    if (grounded)
                     {
                         StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
                     }
-                    else if (hitboxScript.hitboxType == 1 && thrustParryWindow < 0f)
-                    {
-                        StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
-                    }
-                    else
-                    {
-                        lastParrySuccessful = true;
-                        parryWindow = 0;
-                        parryActionBlockTime = hitboxScript.onParryStun;
-                        StartCoroutine(ParryMovementBlock());
-                        rb.AddForce(Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.deflectPushback * Vector2.left, ForceMode2D.Impulse);
-                    }
-                }
-            }
-            else
-            {
-                if (grounded)
-                {
-                    StartCoroutine(ApplyHitstun(hitboxScript.onHitStun, Mathf.Abs(colliding.transform.position.x - transform.position.x) / (colliding.transform.position.x - transform.position.x) * hitboxScript.hitPushback));
                 }
             }
             Destroy(collide.gameObject);
