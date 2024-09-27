@@ -8,6 +8,10 @@ public class PlayerControls : MonoBehaviour
     public float speed = 4f;
     public float speedUpdate = 0f;
     public float sprintMultiplier = 2f;
+    public float dashForce = 10f;
+    public BoxCollider2D[] allColliders;
+    public BoxCollider2D[] collidersOnPlayer;
+    BoxCollider2D hitbox;
     public float parryWindowBase = 0.5f;
     public float parryWindowInit;
     public float thrustParryWindow;
@@ -34,10 +38,30 @@ public class PlayerControls : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        collidersOnPlayer = new BoxCollider2D[2];
         rb = GetComponent<Rigidbody2D>();
         playerSprite = GetComponent<SpriteRenderer>();
         parryWindowInit = parryWindowBase;
         speedUpdate = speed;
+        allColliders = FindObjectsOfType<BoxCollider2D>();
+        int count = 0;
+        foreach (BoxCollider2D c in allColliders)
+        {
+            Debug.Log(c.gameObject);
+            if (c.gameObject.CompareTag("Player"))
+            {
+                collidersOnPlayer[count] = c;
+                count++;
+            }
+        }
+        Debug.Log(collidersOnPlayer[0]);
+        foreach (BoxCollider2D p in collidersOnPlayer)
+        {
+            if (p.isTrigger)
+            {
+                hitbox = p;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -98,6 +122,19 @@ public class PlayerControls : MonoBehaviour
             speedUpdate = speed;
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !movementBlocked && grounded)
+        {
+            if (directionFacing == 1)
+            {
+                rb.AddForce(Vector2.right * dashForce, ForceMode2D.Impulse);
+            }
+            else
+            {
+                rb.AddForce(Vector2.left * dashForce, ForceMode2D.Impulse);
+            }
+            StartCoroutine(WaitForDash());
+        }
+
         if (Input.GetKey(KeyCode.LeftShift) && horizontalMove != 0f && !normalBlocking && parryWindow < 0f)
         {
             speedUpdate = speed * 2f;
@@ -123,7 +160,7 @@ public class PlayerControls : MonoBehaviour
         {
             transform.localRotation = Quaternion.Euler(Vector3.zero);
         }
-        if (grounded && rb.velocity.magnitude > speedUpdate && horizontalMove != 0)
+        if (grounded && rb.velocity.magnitude > speedUpdate && horizontalMove != 0 && !movementBlocked)
         {
             if (rb.velocity.x < 0f)
             {
@@ -142,6 +179,8 @@ public class PlayerControls : MonoBehaviour
         if (inHitstun)
         {
             normalBlocking = false;
+            forceMovementBlock = false;
+            forceActionBlock = false;
             movementBlocked = true;
             actionBlocked = true;
             parryWindow = 0;
@@ -191,7 +230,14 @@ public class PlayerControls : MonoBehaviour
 
     IEnumerator WaitForDash()
     {
-
+        forceMovementBlock = true;
+        forceActionBlock = true;
+        hitbox.enabled = false;
+        yield return new WaitForSeconds(0.2f);
+        hitbox.enabled = true;
+        yield return new WaitForSeconds(0.3f);
+        forceMovementBlock = false;
+        forceActionBlock = false;
     }
 
     void OnCollisionExit2D(Collision2D collision)
