@@ -124,15 +124,15 @@ public class PlayerControls : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && !movementBlocked && grounded)
         {
+            StartCoroutine(WaitForDash());
             if (directionFacing == 1)
             {
-                rb.AddForce(Vector2.right * dashForce, ForceMode2D.Impulse);
+                rb.AddForce(Vector3.right * dashForce, ForceMode2D.Impulse);
             }
             else
             {
-                rb.AddForce(Vector2.left * dashForce, ForceMode2D.Impulse);
+                rb.AddForce(Vector3.left * dashForce, ForceMode2D.Impulse);
             }
-            StartCoroutine(WaitForDash());
         }
 
         if (Input.GetKey(KeyCode.LeftShift) && horizontalMove != 0f && !normalBlocking && parryWindow < 0f)

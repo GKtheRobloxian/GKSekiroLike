@@ -105,7 +105,10 @@ MonoBehaviour:
   deflectPushback: 100
   onHitStun: 0.5
   onBlockStun: 0.2
+  onParryStun: 0.3
   size: {x: 0, y: 0, z: 0}
+  hitboxType: 0
+  debugColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!61 &8963078884313152814
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -163,4 +166,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1e20ab8bcc08f549a69d8fc954bcb96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
+  speed: 25
